@@ -39,3 +39,5 @@ The GitHub Actions workflow now includes the browser checks and screenshot uploa
 ## GitHub Pages browser demo
 
 A separate, explicitly labeled static demo is generated into `docs/` by `scripts/build-pages.cjs`. Chromium verified relative assets under a project subpath, simulated transfers with conserved sample balances, account search, CSV downloads, reload reset, and a 390-pixel mobile layout. No banking API requests or browser exceptions occurred. This simulation is tab-local and makes no database transaction or concurrency guarantees. The Java/PostgreSQL application remains separate. Repository Pages configuration and the public deployment could not be inspected or enabled from the cloud machine because the GitHub settings API returned Forbidden. Hosting requires selecting `main` and `/docs` under repository Settings → Pages.
+
+The Pages generator now also writes a real `index.html` and `.nojekyll` at the repository root. Both root and `/docs` publishing selections load the interactive dashboard instead of allowing GitHub Pages to render the project README. Browser regression checks cover both entry points and their relative asset paths.

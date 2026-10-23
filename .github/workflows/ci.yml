@@ -54,6 +54,10 @@ jobs:
           curl --silent --fail http://127.0.0.1:18083/docs/ > /dev/null
       - name: Verify GitHub Pages browser demo
         run: npm run test:pages
+      - name: Verify repository-root website entry point
+        run: npm run test:pages
+        env:
+          BANKSYNC_PAGES_URL: http://127.0.0.1:18083/
       - name: Start disposable website demo
         run: |
           java -jar target/banksync.jar --spring.profiles.active=demo --server.port=18080 > /tmp/banksync-web.log 2>&1 &
