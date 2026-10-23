@@ -4,6 +4,20 @@ A Java 21 / Spring Boot 3.5 portfolio backend for atomic money transfers, optimi
 
 This is a runnable reference implementation, not a certified banking platform. The production profile adds service authentication and operational settings; the deployment responsibilities and functional boundaries below still apply.
 
+## GitHub Pages website
+
+The `docs/` folder contains a ready-to-publish **interactive browser demo**. To enable it once:
+
+1. Open repository **Settings → Pages**.
+2. Under **Build and deployment**, select **Deploy from a branch**.
+3. Select branch **main** and folder **/docs**, then click **Save**.
+
+After GitHub finishes deployment, the site should be available at `https://ayushb900.github.io/JavaProj/`. GitHub controls deployment availability and timing.
+
+GitHub Pages only hosts static files. The hosted demo clearly labels sample balances and simulates transfers in memory in a single browser tab; reload resets it. It sends no transfer requests to a server and does not provide database concurrency, persistence, authentication or real banking. The full Java/PostgreSQL application remains available below and must be hosted on a Java/container platform for backend features.
+
+After editing the website, run `npm run build:pages` to regenerate the committed Pages files. `npm run check:pages` detects stale generated files. No npm dependencies are required for these two build commands.
+
 ## Quick start
 
 Install Java 21. The Maven wrapper downloads verified Maven 3.9.11 automatically.

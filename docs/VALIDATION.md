@@ -35,3 +35,7 @@ The website is served directly from the Spring Boot executable JAR. No Node buil
 - The final 19-test suite also passed independently against PostgreSQL, including the dashboard aggregates, paginated searches and read APIs.
 
 The GitHub Actions workflow now includes the browser checks and screenshot upload. Those workflow changes have been validated locally through the equivalent commands; the workflow itself has not been run on GitHub.
+
+## GitHub Pages browser demo
+
+A separate, explicitly labeled static demo is generated into `docs/` by `scripts/build-pages.cjs`. Chromium verified relative assets under a project subpath, simulated transfers with conserved sample balances, account search, CSV downloads, reload reset, and a 390-pixel mobile layout. No banking API requests or browser exceptions occurred. This simulation is tab-local and makes no database transaction or concurrency guarantees. The Java/PostgreSQL application remains separate. Repository Pages configuration and the public deployment could not be inspected or enabled from the cloud machine because the GitHub settings API returned Forbidden. Hosting requires selecting `main` and `/docs` under repository Settings → Pages.

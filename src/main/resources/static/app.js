@@ -14,13 +14,14 @@ function moneyFromCents(value) {
 }
 const money = value => moneyFromCents(cents(value));
 function accountTitle(number) {
-  return ({'ACC-1001':'Operating account','ACC-1002':'Reserve account'})[number] || 'Connected account';
+  return ({'ACC-1001':'Operating account','ACC-1002':'Reserve account','ACC-1003':'Expenses account','ACC-1004':'Payroll account'})[number] || 'Connected account';
 }
 function toast(message, error = false) {
   const element = $('toast'); element.textContent = message; element.classList.toggle('error', error); element.classList.remove('hidden');
   clearTimeout(toast.timer); toast.timer = setTimeout(() => element.classList.add('hidden'), error ? 12000 : 6000);
 }
 async function api(path, options = {}) {
+  if (window.BankSyncDemo) return window.BankSyncDemo.request(path, options);
   const response = await fetch(path, { credentials: 'same-origin', ...options, headers: {'Accept':'application/json', ...(options.headers || {})} });
   if (!response.ok) {
     let body = {}; try { body = await response.json(); } catch (_) {}
@@ -30,7 +31,7 @@ async function api(path, options = {}) {
   return response.status === 204 ? null : response.json();
 }
 function connection(online) {
-  $('connection-status').innerHTML = `<i></i>${online ? 'Workspace connected' : 'Connection interrupted'}`;
+  $('connection-status').innerHTML = `<i></i>${online ? (window.BankSyncDemo ? 'Browser demo' : 'Workspace connected') : 'Connection interrupted'}`;
   $('connection-status').classList.toggle('offline', !online);
 }
 function renderDashboard(data) {

@@ -38,10 +38,22 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Check generated GitHub Pages website
+        run: node scripts/build-pages.cjs --check
       - name: Install browser test dependencies
         run: |
           npm ci
           npx playwright install --with-deps chromium
+      - name: Start static Pages test server
+        run: |
+          python3 -m http.server 18083 --bind 127.0.0.1 > /tmp/banksync-pages.log 2>&1 &
+          for attempt in $(seq 1 15); do
+            if curl --silent --fail http://127.0.0.1:18083/docs/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --silent --fail http://127.0.0.1:18083/docs/ > /dev/null
+      - name: Verify GitHub Pages browser demo
+        run: npm run test:pages
       - name: Start disposable website demo
         run: |
           java -jar target/banksync.jar --spring.profiles.active=demo --server.port=18080 > /tmp/banksync-web.log 2>&1 &
