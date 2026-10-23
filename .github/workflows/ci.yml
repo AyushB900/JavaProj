@@ -1,0 +1,62 @@
+name: BankSync CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: banksync_test
+          POSTGRES_USER: banksync_test
+          POSTGRES_PASSWORD: ci-only-database-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U banksync_test -d banksync_test"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: H2 verification
+        run: ./mvnw -B -ntp verify
+      - name: PostgreSQL integration tests
+        run: ./mvnw -B -ntp test
+        env:
+          TEST_DB_URL: jdbc:postgresql://localhost:5432/banksync_test
+          TEST_DB_USER: banksync_test
+          TEST_DB_PASSWORD: ci-only-database-password
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install browser test dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Start disposable website demo
+        run: |
+          java -jar target/banksync.jar --spring.profiles.active=demo --server.port=18080 > /tmp/banksync-web.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:18080/actuator/health > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail http://127.0.0.1:18080/actuator/health
+      - name: Verify website in Chromium
+        run: npm run test:web
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: website-screenshots
+          path: target/browser/
+          if-no-files-found: ignore
+      - name: Build container and execute its H2 tests
+        run: docker build -t banksync:ci .

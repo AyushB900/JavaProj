@@ -1,0 +1,8 @@
+{
+  "name": "banksync-browser-checks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Optional browser checks; the website itself needs no Node build",
+  "scripts": { "test:web": "node scripts/browser-smoke.cjs" },
+  "devDependencies": { "playwright": "1.62.1" }
+}
